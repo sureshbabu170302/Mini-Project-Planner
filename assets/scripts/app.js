@@ -37,16 +37,18 @@ class Component {
 }
 
 class ToolTip extends Component {
-  constructor(closeNotifierFunction) {
-    super();
+  constructor(closeNotifierFunction, text, hostElementId) {
+    super(hostElementId);
     this.closeNotifier = closeNotifierFunction;
+    this.text = text;
     this.create();
   }
 
   create() {
     const toolTipElement = document.createElement("div");
     toolTipElement.className = "card";
-    toolTipElement.textContent = "This is INFO!";
+    toolTipElement.textContent = this.text;
+    console.log(this.hostElement.getBoundingClientRect());
     toolTipElement.addEventListener("click", this.closeToolTip);
     this.element = toolTipElement;
   }
@@ -71,9 +73,15 @@ class ProjectItem {
     if (this.hasActiveToolTip == true) {
       return;
     }
-    const toolTip = new ToolTip(() => {
-      this.hasActiveToolTip = false;
-    });
+    const projectElement = document.getElementById(this.id);
+    const toolTipText = projectElement.dataset.extraInfo;
+    const toolTip = new ToolTip(
+      () => {
+        this.hasActiveToolTip = false;
+      },
+      toolTipText,
+      this.id
+    );
     toolTip.attach();
     this.hasActiveToolTip = true;
   }
@@ -83,7 +91,7 @@ class ProjectItem {
     const moreInfoBtn = projectItemElement.querySelector(
       "button:first-of-type"
     );
-    moreInfoBtn.addEventListener("click", this.showMoreInfoHandler);
+    moreInfoBtn.addEventListener("click", this.showMoreInfoHandler.bind(this));
   }
 
   connectSwitchButton(type) {
