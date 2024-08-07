@@ -26,8 +26,8 @@ export class ProjectItem {
         tooltipText,
         this.id
       );
+      tooltip.attach();
     });
-    tooltip.attach();
     this.hasActiveTooltip = true;
   }
 
